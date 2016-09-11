@@ -1,4 +1,4 @@
-#include "Main.hpp"
+#include "Main.h"
 
 int main(int argc, char const *argv[])
 {
@@ -27,9 +27,24 @@ int main(int argc, char const *argv[])
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	glfwSetKeyCallback(window, key_callback);
 
+	GLuint VBO;
+	glGenBuffers(1, &VBO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO); // Bind VBO as the GL array buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // Copy data into the buffer
+
+
+
 	while (!glfwWindowShouldClose(window))
 	{
+		// Check events
 		glfwPollEvents();
+
+		// Rendering commands here
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f); // State-setting function
+		glClear(GL_COLOR_BUFFER_BIT); // State-using function
+
+		// Swap the buffers
 		glfwSwapBuffers(window);
 	}
 
