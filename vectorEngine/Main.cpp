@@ -1,4 +1,24 @@
-#include "Main.h"
+#define GLEW_STATIC
+
+#include <iostream>
+#include <glew.h>
+#include <glfw3.h>
+#include "Shader.h"
+
+// Data
+GLfloat vertices[] = {
+	-0.5f, -0.5f, 0.0f,
+	0.5f, -0.5f, 0.0f,
+	0.0f,  0.5f, 0.0f
+};
+
+// Constants
+const GLuint WINDOW_WIDTH = 800;
+const GLuint WINDOW_HEIGHT = 600;
+
+// Function prototypes
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+
 
 int main(int argc, char const *argv[])
 {
@@ -33,7 +53,7 @@ int main(int argc, char const *argv[])
 	glBindBuffer(GL_ARRAY_BUFFER, VBO); // Bind VBO as the GL array buffer
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // Copy data into the buffer
 
-
+	Shader stuff()
 
 	while (!glfwWindowShouldClose(window))
 	{
