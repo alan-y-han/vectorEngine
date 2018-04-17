@@ -107,39 +107,3 @@ void processInput(GLFWwindow* window)
         glfwSetWindowShouldClose(window, true);
     }
 }
-
-unsigned int compileShader(int shaderType, const char* shaderSource)
-{
-    unsigned int shaderID;
-    shaderID = glCreateShader(shaderType);
-    glShaderSource(shaderID, 1, &shaderSource, NULL);
-    glCompileShader(shaderID);
-    checkShaderCompileSuccess(shaderID);
-    return shaderID;
-}
-
-bool checkShaderCompileSuccess(unsigned int shaderID)
-{
-    int success;
-    char infoLog[512];
-    glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
-        std::cerr << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    return success;
-}
-
-bool checkShaderProgramLinkSuccess(unsigned int shaderProgID)
-{
-    int success;
-    char infoLog[512];
-    glGetProgramiv(shaderProgID, GL_LINK_STATUS, &success);
-    if (!success)
-    {
-        glGetProgramInfoLog(shaderProgID, 512, NULL, infoLog);
-        std::cerr << "ERROR::LINKER::LINKING_FAILED\n" << infoLog << std::endl;
-    }
-    return success;
-}
