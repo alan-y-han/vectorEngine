@@ -10,7 +10,7 @@ layout(location = 0) in vec3 aPos;\
 \
 void main()\
 {\
-    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\
+    gl_Position = vec4(aPos.xyz, 1.0);\
 }\
 ";
 
@@ -18,10 +18,11 @@ const char* fragmentShaderSource =
 "\
 #version 330 core\n\
 out vec4 FragColor;\
+uniform vec4 ourColor;\
 \
 void main()\
 {\
-    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\
+    FragColor = ourColor;\
 }\
 ";
 
@@ -114,6 +115,10 @@ int main(int argc, char const *argv[])
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+    int nrAttributes;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+    std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
+
     while (!glfwWindowShouldClose(window))
     {
         // input
@@ -123,7 +128,11 @@ int main(int argc, char const *argv[])
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        float timeValue = glfwGetTime();
+        float greenValue = (sin(timeValue) / 2.0) + 0.5f;
+        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
         glUseProgram(shaderProgram);
+        glUniform4f(vertexColorLocation, 0.04, greenValue, 0.0f, 1.0f); // N.B. must use shader before updating uniform
 
         glBindVertexArray(VAOs[0]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
