@@ -13,9 +13,6 @@ float vertices[] = {
 // Function prototypes
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
-unsigned int compileShader(int shaderType, const char* shaderSource);
-bool checkShaderCompileSuccess(unsigned int shaderID);
-bool checkShaderProgramLinkSuccess(unsigned int shaderProgID);
 
 
 int main(int argc, char const *argv[])
@@ -73,13 +70,6 @@ int main(int argc, char const *argv[])
 
         //glUseProgram(shaderProgram);
         ourShader.use();
-
-        float timeValue = glfwGetTime();
-        float greenValue = (sin(timeValue) / 2.0) + 0.5f;
-        //int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
-        //glUniform4f(vertexColorLocation, 0.04, greenValue, 0.0f, 1.0f); // N.B. must use shader before updating uniform
-
-        ourShader.setFloat4("ourColor", 0.04f, greenValue, 0.0f, 1.0f);
 
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
