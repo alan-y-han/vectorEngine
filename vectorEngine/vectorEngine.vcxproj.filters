@@ -26,9 +26,12 @@
     <ClInclude Include="src\Main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\vertexShader.glsl" />
-    <None Include="src\fragShader.glsl" />
+    <None Include="src\vShader.glsl" />
+    <None Include="src\fShader.glsl" />
   </ItemGroup>
 </Project>

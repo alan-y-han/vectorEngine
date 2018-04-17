@@ -1,36 +1,7 @@
 #include <iostream>
 #include <glad\glad.h> // include this before glfw3.h
 #include <GLFW\glfw3.h>
-
-
-const char* vertexShaderSource =
-"\
-#version 330 core\n\
-layout(location = 0) in vec3 aPos;\
-layout(location = 1) in vec3 aColor;\
-\
-out vec3 ourColor;\
-\
-void main()\
-{\
-    gl_Position = vec4(aPos, 1.0);\
-    ourColor = aColor;\
-}\
-";
-
-const char* fragmentShaderSource =
-"\
-#version 330 core\n\
-in vec3 ourColor;\
-\
-out vec4 FragColor;\
-\
-void main()\
-{\
-    FragColor = vec4(ourColor, 1.0);\
-}\
-";
-
+#include "Shader.h"
 
 float vertices[] = {
     // positions         // colors
@@ -72,17 +43,7 @@ int main(int argc, char const *argv[])
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, vertexShaderSource);
-    unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
-
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    checkShaderProgramLinkSuccess(shaderProgram);
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    Shader ourShader("src/vShader.glsl", "src/fShader.glsl");
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
@@ -110,12 +71,15 @@ int main(int argc, char const *argv[])
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shaderProgram);
+        //glUseProgram(shaderProgram);
+        ourShader.use();
 
         float timeValue = glfwGetTime();
         float greenValue = (sin(timeValue) / 2.0) + 0.5f;
-        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
-        glUniform4f(vertexColorLocation, 0.04, greenValue, 0.0f, 1.0f); // N.B. must use shader before updating uniform
+        //int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+        //glUniform4f(vertexColorLocation, 0.04, greenValue, 0.0f, 1.0f); // N.B. must use shader before updating uniform
+
+        ourShader.setFloat4("ourColor", 0.04f, greenValue, 0.0f, 1.0f);
 
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);

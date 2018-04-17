@@ -133,10 +133,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Main.h" />
+    <ClInclude Include="src\Shader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\fragShader.glsl" />
-    <None Include="src\vertexShader.glsl" />
+    <None Include="src\fShader.glsl" />
+    <None Include="src\vShader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
