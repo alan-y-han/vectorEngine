@@ -3,7 +3,7 @@
 #include <GLFW\glfw3.h>
 
 
-char* vertexShaderSource =
+const char* vertexShaderSource =
 "\
 #version 330 core\n\
 layout(location = 0) in vec3 aPos;\
@@ -14,7 +14,7 @@ void main()\
 }\
 ";
 
-char* fragmentShaderSource =
+const char* fragmentShaderSource =
 "\
 #version 330 core\n\
 out vec4 FragColor;\
@@ -28,15 +28,21 @@ void main()\
 
 float vertices[] =
 {
-   -0.5f, -0.5f, 0.0f, // left
-    0.5f, -0.5f, 0.0f, // right
-    0.0f, 0.5f, 0.0f   // top
+    0.5f,  0.5f, 0.0f,  // top right
+    0.5f, -0.5f, 0.0f,  // bottom right
+    -0.5f, -0.5f, 0.0f,  // bottom left
+    -0.5f,  0.5f, 0.0f   // top left 
+};
+unsigned int indices[] =
+{
+    0, 1, 3, // first triangle
+    1, 2, 3  // second triangle
 };
 
 // Function prototypes
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
-unsigned int compileShader(int shaderType, char* shaderSource);
+unsigned int compileShader(int shaderType, const char* shaderSource);
 bool checkShaderCompileSuccess(unsigned int shaderID);
 bool checkShaderProgramLinkSuccess(unsigned int shaderProgID);
 
@@ -78,21 +84,35 @@ int main(int argc, char const *argv[])
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    // 1. create and bind Vertex Array Object
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-    // 2. create Vertex Buffer Object, copy our vertices array in a buffer for OpenGL to use
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // 3. then set our vertex attriutes pointers
+
+    float firstTriangle[] = {
+        -0.9f, -0.5f, 0.0f,  // left 
+        -0.0f, -0.5f, 0.0f,  // right
+        -0.45f, 0.5f, 0.0f,  // top 
+    };
+    float secondTriangle[] = {
+        0.0f, -0.5f, 0.0f,  // left
+        0.9f, -0.5f, 0.0f,  // right
+        0.45f, 0.5f, 0.0f   // top 
+    };
+
+    unsigned int VBOs[2], VAOs[2];
+    glGenVertexArrays(2, VAOs);
+    glGenBuffers(2, VBOs);
+    // first triangle setup
+    glBindVertexArray(VAOs[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(firstTriangle), firstTriangle, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // second triangle setup
+    glBindVertexArray(VAOs[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(secondTriangle), secondTriangle, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -104,7 +124,10 @@ int main(int argc, char const *argv[])
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
+
+        glBindVertexArray(VAOs[0]);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(VAOs[1]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // check and call events, and swap the buffers
@@ -113,8 +136,8 @@ int main(int argc, char const *argv[])
     }
 
     // deallocate resources
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+    glDeleteVertexArrays(2, VAOs);
+    glDeleteBuffers(2, VBOs);
 
     glfwTerminate();
 	return 0;
@@ -133,7 +156,7 @@ void processInput(GLFWwindow* window)
     }
 }
 
-unsigned int compileShader(int shaderType, char* shaderSource)
+unsigned int compileShader(int shaderType, const char* shaderSource)
 {
     unsigned int shaderID;
     shaderID = glCreateShader(shaderType);
@@ -151,7 +174,7 @@ bool checkShaderCompileSuccess(unsigned int shaderID)
     if (!success)
     {
         glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
-        std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        std::cerr << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
     return success;
 }
