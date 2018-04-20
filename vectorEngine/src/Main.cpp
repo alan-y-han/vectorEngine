@@ -56,9 +56,21 @@ unsigned int indices[] = {
     0, 1, 3, // first triangle
     1, 2, 3  // second triangle
 };
+glm::vec3 cubePositions[] = {
+    glm::vec3(0.0f,  0.0f,  0.0f),
+    glm::vec3(2.0f,  5.0f, -15.0f),
+    glm::vec3(-1.5f, -2.2f, -2.5f),
+    glm::vec3(-3.8f, -2.0f, -12.3f),
+    glm::vec3(2.4f, -0.4f, -3.5f),
+    glm::vec3(-1.7f,  3.0f, -7.5f),
+    glm::vec3(1.3f, -2.0f, -2.5f),
+    glm::vec3(1.5f,  2.0f, -2.5f),
+    glm::vec3(1.5f,  0.2f, -1.5f),
+    glm::vec3(-1.3f,  1.0f, -1.5f)
+};
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+unsigned int SCR_WIDTH = 800;
+unsigned int SCR_HEIGHT = 600;
 
 
 // Function prototypes
@@ -145,20 +157,28 @@ int main(int argc, char const *argv[])
 
         ourShader.use();
 
-        glm::mat4 model;
-        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
         glm::mat4 view;
         view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-        //view = glm::rotate(view, glm::radians((float)glfwGetTime()*100), glm::vec3(0.0f, 1.0f, 0.0f));
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
-        ourShader.setMat4("model", model);
+        //ourShader.setMat4("model", model);
         ourShader.setMat4("view", view);
         ourShader.setMat4("projection", projection);
 
         glBindVertexArray(VAO);
-        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        for (int i = 0; i < 10; i++)
+        {
+            glm::mat4 model;
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            ourShader.setMat4("model", model);
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // check and call events, and swap the buffers
@@ -174,7 +194,9 @@ int main(int argc, char const *argv[])
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    glViewport(0, 0, width, height);
+    SCR_WIDTH = width;
+    SCR_HEIGHT = height;
+    glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 }
 
 void processInput(GLFWwindow* window)
