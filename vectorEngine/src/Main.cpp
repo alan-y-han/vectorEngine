@@ -111,6 +111,13 @@ int main(int argc, char const *argv[])
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+        glm::mat4 trans2;
+        trans2 = glm::translate(trans2, glm::vec3(-0.5f, 0.5f, 0.0f));
+        float scale = sin(glfwGetTime());
+        trans2 = glm::scale(trans2, glm::vec3(scale, scale, 1.0f));
+        ourShader.setMat4("transform", trans2);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
         // check and call events, and swap the buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
