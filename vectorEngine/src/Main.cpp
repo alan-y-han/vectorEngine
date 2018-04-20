@@ -1,5 +1,8 @@
 #include <glad\glad.h> // include this before glfw3.h
 #include <GLFW\glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <stb/stb_image.h>
 
 #include "Shader.h"
@@ -83,6 +86,7 @@ int main(int argc, char const *argv[])
     ourShader.setInt("texture1", 0);
     ourShader.setInt("texture2", 1);
 
+
     while (!glfwWindowShouldClose(window))
     {
         // input
@@ -92,11 +96,17 @@ int main(int argc, char const *argv[])
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        ourShader.use();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
+
+        glm::mat4 trans;
+        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        
+        ourShader.use();
+        ourShader.setMat4("transform", trans);
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
